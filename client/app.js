@@ -1,9 +1,9 @@
 let currPitch = NOTE_DISPLAY_OPTIONS[0];
 let soundEnabled = false;
 
-paper.addEventListener("click", () => {
+PAPER.addEventListener("click", () => {
   soundEnabled = !soundEnabled;
-  isOnDisplay.textContent = `Sound: ${soundEnabled ? "On" : "Off"}`;
+  IS_ON_DISPLAY.textContent = `Sound: ${soundEnabled ? "On" : "Off"}`;
 });
 
 draw();

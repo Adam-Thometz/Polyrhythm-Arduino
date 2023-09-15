@@ -8,14 +8,14 @@ connection.onopen = () => {
 };
 
 connection.onmessage = e => {
-  const { data } = e;
-  if (+data) {
+  const data = +e.data;
+  if (data) {
     // new pitch should return a number btw 0 and 11
-    const newPitch = Math.floor(data / (MAX_PERCENTAGE / NUM_OF_NOTES));
-    pitchShift.pitch = newPitch;
+    const newPitch = Math.floor(data / (MAX_PERCENTAGE / NUM_OF_NOTES)) % 12;
+    PITCHSHIFT.pitch = newPitch;
     if (currPitch != newPitch) {
       currPitch = NOTE_DISPLAY_OPTIONS[newPitch];
-      currKeyDisplay.textContent = `Key: ${currPitch}`;
+      CURR_KEY_DISPLAY.textContent = `Key: ${currPitch}`;
       changeDisplay();
     }
   }

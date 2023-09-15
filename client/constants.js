@@ -1,15 +1,15 @@
 // ELEMENTS
-const isOnDisplay = document.getElementById("isOn");
-const currKeyDisplay = document.getElementById("currKey")
-const paper = document.getElementById("paper");
-const pen = paper.getContext("2d");
-const noteDisplay = document.querySelectorAll(".noteDisplay > *");
+const IS_ON_DISPLAY = document.getElementById("isOn");
+const CURR_KEY_DISPLAY = document.getElementById("currKey")
+const PAPER = document.getElementById("paper");
+const PEN = PAPER.getContext("2d");
+const NOTE_DISPLAY = document.querySelectorAll(".noteDisplay > *");
 
-// INSTRUMENT
-const pitchShift = new Tone.PitchShift(0).toDestination();
-const piano = new Tone.Sampler({ urls: { C3: "./piano.wav" } }).connect(pitchShift);
+// MUSIC
+const PITCHSHIFT = new Tone.PitchShift(0).toDestination();
+const PIANO = new Tone.Sampler({ urls: { C3: "./piano.wav" } }).connect(PITCHSHIFT);
 
-// CONSTANTS
+// COLORS
 const BLUE = "#0066A3";
 const GREEN = "#5DFC0A";
 const YELLOW = "#F1EB9C";
@@ -20,7 +20,8 @@ const VELOCITY = 1;
 const START_TIME = new Date().getTime();
 const OFFSET = 0.03;
 
-const NOTE_DISPLAY_OPTIONS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "C"];
+// DISPLAY
+const NOTE_DISPLAY_OPTIONS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 const ARCS = [
   { color: BLUE, note: "C4" },
   { color: GREEN, note: "A3" },
@@ -31,7 +32,7 @@ const ARCS = [
   { color: YELLOW, note: "E2" },
   { color: RED, note: "C2" },
 ].map(({ color, note }, i) => {
-  const play = () => piano.triggerAttackRelease(note);
+  const play = () => PIANO.triggerAttackRelease(note);
   const velocity = VELOCITY - (i * OFFSET);
   return {
     color,
@@ -40,5 +41,4 @@ const ARCS = [
     nextImpactTime: calculateNextImpactTime(START_TIME, velocity),
     velocity
   };
-}); // NOTE THAT COLORS SHOW UP IN REVERSE ORDER
-
+}); // NOTE THAT COLORS START IN AND GO OUT
