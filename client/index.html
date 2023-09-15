@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Arduino-controlled music</title>
+</head>
+<body>
+  <div id="settings">
+    <span id="isOn">Sound: Off</span>
+    <span id="currKey">Key: C</span>
+  </div>
+  <canvas id="paper"></canvas>
+  <div class="noteDisplay">
+    <div id="note1">C</div>
+    <div id="note2">E</div>
+    <div id="note3">G</div>
+    <div id="note4">B</div>
+    <div id="note5">D</div>
+    <div id="note6">F</div>
+    <div id="note7">A</div>
+    <div id="note8">C</div>
+  </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js" integrity="sha512-jduERlz7En1IUZR54bqzpNI64AbffZWR//KJgF71SJ8D8/liKFZ+s1RxmUmB+bhCnIfzebdZsULwOrbVB5f3nQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="helpers.js"></script>
+<script src="globals.js"></script>
+<script src="websocket.js"></script>
+<script src="app.js"></script>

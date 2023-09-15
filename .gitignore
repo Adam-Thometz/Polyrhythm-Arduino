@@ -1,0 +1,4 @@
+client/node_modules
+
+arduino/node_modules
+arduino/.env
