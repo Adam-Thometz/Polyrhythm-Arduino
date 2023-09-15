@@ -28,7 +28,7 @@ wss.on('connection', (socket) => {
   parser.on("data", data => {
     console.log(data);
     io.emit("data", data);
-    socket.send(data.replace("\r", ""));
+    socket.send(+data.replace("\r", ""));
   });
 });
 
