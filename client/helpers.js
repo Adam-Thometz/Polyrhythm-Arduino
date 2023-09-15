@@ -50,7 +50,7 @@ function changeDisplay() {
   const PERFECT_ELEVENTH = (ROOT + 5) % 12;
   const MAJOR_THIRTEENTH = (ROOT + 9) % 12;
 
-  const notes = [ROOT, MAJOR_THIRD, PERFECT_FIFTH, MAJOR_SEVENTH, MAJOR_NINTH, PERFECT_ELEVENTH, MAJOR_THIRTEENTH]
+  const notes = [ROOT, MAJOR_THIRD, PERFECT_FIFTH, MAJOR_SEVENTH, MAJOR_NINTH, PERFECT_ELEVENTH, MAJOR_THIRTEENTH, ROOT];
 
   for (let i = 0; i < notes.length; i++) {
     noteDisplay[i].textContent = NOTE_DISPLAY_OPTIONS[notes[i]];
