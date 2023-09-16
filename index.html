@@ -1,0 +1,263 @@
+<!-- This file is for hosting on Githio.io only -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arduino-controlled music</title>
+</head>
+<style>
+  body {
+  background-color: rgba(0, 0, 0, 1);
+  font-family: Roboto, sans-serif;
+}
+
+#paper {
+  height: 90vh;
+  width: 100vw;
+}
+
+#instructions {
+  color: rgb(184, 184, 184);
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: fade-in-out 10s linear 1 forwards;
+}
+
+#settings {
+  color: rgb(184, 184, 184);
+  font-size: 3rem;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  top: 3%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.noteDisplay {
+  position: absolute;
+  display: flex;
+  bottom: 0%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.noteDisplay > * {
+  height: 75px;
+  width: 75px;
+  margin: 10px 40px;
+  font-size: 3rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes fade-in-out {
+  0% {
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  95% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+</style>
+<body>
+  <div id="settings">
+    <span id="isOn">Sound: Off</span>
+    <span id="currKey">Key: C</span>
+  </div>
+  <canvas id="paper"></canvas>
+  <div class="noteDisplay">
+    <div id="note1">C</div>
+    <div id="note2">E</div>
+    <div id="note3">G</div>
+    <div id="note4">B</div>
+    <div id="note5">D</div>
+    <div id="note6">F</div>
+    <div id="note7">A</div>
+    <div id="note8">C</div>
+  </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js" integrity="sha512-jduERlz7En1IUZR54bqzpNI64AbffZWR//KJgF71SJ8D8/liKFZ+s1RxmUmB+bhCnIfzebdZsULwOrbVB5f3nQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+  function createAnimation(backgroundColor) {
+    return {
+      animation: [
+        { backgroundColor },
+        { backgroundColor: "#000000" }
+      ],
+      duration: 2000,
+    }
+  }
+
+  function getDimensions(width, height) {
+    const y = height * 0.9;
+
+    const start = { x: width * 0.1, y };
+    const center = { x: width * 0.5, y };
+    const end = { x: width * 0.9, y };
+
+    return { start, center, end };
+  }
+
+  function calculateNextImpactTime(currentImpactTime, velocity) {
+    return currentImpactTime + (Math.PI / velocity) * 1000;
+  }
+
+  function calculateDistance(elapsedTime, velocity) {
+    const distance = Math.PI + (elapsedTime * velocity);
+    const modDistance = distance % MAX_ANGLE;
+    const calculatedDistance = modDistance >= Math.PI
+      ? distance
+      : MAX_ANGLE - distance;
+
+    return calculatedDistance;
+  }
+
+  function changeDisplay() {
+    const ROOT = NOTE_DISPLAY_OPTIONS.findIndex(val => val == currPitch);
+    const notes = [ROOT];
+    const MAJOR_THIRD = (ROOT + 4) % 12;
+    notes.push(MAJOR_THIRD);
+    const PERFECT_FIFTH = (ROOT + 7) % 12;
+    notes.push(PERFECT_FIFTH);
+    const MAJOR_SEVENTH = (ROOT + 11) % 12;
+    notes.push(MAJOR_SEVENTH);
+    const MAJOR_NINTH = (ROOT + 2) % 12;
+    notes.push(MAJOR_NINTH);
+    const PERFECT_ELEVENTH = (ROOT + 5) % 12;
+    notes.push(PERFECT_ELEVENTH);
+    const MAJOR_THIRTEENTH = (ROOT + 9) % 12;
+    notes.push(MAJOR_THIRTEENTH);
+    notes.push(ROOT);
+
+    for (let i = 0; i < notes.length; i++) {
+      NOTE_DISPLAY[i].textContent = NOTE_DISPLAY_OPTIONS[notes[i]];
+    }
+  }
+
+  const IS_ON_DISPLAY = document.getElementById("isOn");
+  const CURR_KEY_DISPLAY = document.getElementById("currKey")
+  const PAPER = document.getElementById("paper");
+  const PEN = PAPER.getContext("2d");
+  const NOTE_DISPLAY = document.querySelectorAll(".noteDisplay > *");
+
+  const PITCHSHIFT = new Tone.PitchShift(0).toDestination();
+  const SYNTH = new Tone.PolySynth().connect(PITCHSHIFT);
+
+  const BLUE = "#0066A3";
+  const GREEN = "#5DFC0A";
+  const YELLOW = "#F1EB9C";
+  const RED = "#FF7276";
+
+  const MAX_ANGLE = 2*Math.PI;
+  const VELOCITY = 1;
+  const START_TIME = new Date().getTime();
+  const OFFSET = 0.03;
+
+  const NOTE_DISPLAY_OPTIONS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+  const ARCS = [
+    { color: BLUE, note: "C4" },
+    { color: GREEN, note: "A3" },
+    { color: YELLOW, note: "F3" },
+    { color: RED, note: "D3" },
+    { color: BLUE, note: "B2" },
+    { color: GREEN, note: "G2" },
+    { color: YELLOW, note: "E2" },
+    { color: RED, note: "C2" },
+  ].map(({ color, note }, i) => {
+    const play = () => SYNTH.triggerAttackRelease(note, "4n");
+    const velocity = VELOCITY - (i * OFFSET);
+    return {
+      color,
+      play,
+      position: i,
+      nextImpactTime: calculateNextImpactTime(START_TIME, velocity),
+      velocity
+    };
+  });
+
+  function drawLine(start, end) {
+    PEN.strokeStyle = "white";
+    PEN.lineWidth = 6;
+
+    PEN.beginPath();
+    PEN.moveTo(start.x, start.y);
+    PEN.lineTo(end.x, end.y);
+    PEN.stroke();
+  }
+
+  function drawArc(color, center, radius) {
+    PEN.beginPath();
+    PEN.strokeStyle = color;
+    PEN.arc(center.x, center.y, radius, Math.PI, MAX_ANGLE);
+    PEN.stroke();
+  }
+
+  function drawBall(x, y, size) {
+    PEN.fillStyle = "white";
+    PEN.beginPath();
+    PEN.arc(x, y, size, 0, MAX_ANGLE);
+    PEN.fill();
+  }
+
+  function draw() {
+    const currentTime = new Date().getTime();
+    const elapsedTime = (currentTime - START_TIME) / 1000;
+    PAPER.width = PAPER.clientWidth;
+    PAPER.height = PAPER.clientHeight;
+
+    const { start, center, end } = getDimensions(PAPER.width, PAPER.height);
+
+    drawLine(start, end);
+
+    const length = end.x - start.x;
+    const initialArcRadius = length * 0.05;
+    const spacing = (length / 2 - initialArcRadius) / ARCS.length;
+
+    ARCS.forEach((arc, i) => {
+      const radius = initialArcRadius + (i * spacing);
+      const velocity = VELOCITY - (i * OFFSET);
+      const distance = calculateDistance(elapsedTime, velocity);
+      const x = center.x + radius*Math.cos(distance);
+      const y = center.y + radius*Math.sin(distance);
+      
+      drawArc(arc.color, center, radius);
+      drawBall(x, y, length*0.0075);
+
+      if (currentTime >= arc.nextImpactTime) {
+        if (soundEnabled) {
+          arc.play();
+
+          const { animation, duration } = createAnimation(arc.color);
+          const noteToAnimateIdx = (ARCS.length-1) - arc.position;
+          NOTE_DISPLAY[noteToAnimateIdx].animate(animation, duration);
+        }
+        arc.nextImpactTime = calculateNextImpactTime(arc.nextImpactTime, arc.velocity);
+      }
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  let currPitch = NOTE_DISPLAY_OPTIONS[0];
+  let soundEnabled = false;
+
+  PAPER.addEventListener("click", () => {
+    soundEnabled = !soundEnabled;
+    IS_ON_DISPLAY.textContent = `Sound: ${soundEnabled ? "On" : "Off"}`;
+  });
+
+  draw();
+</script>
