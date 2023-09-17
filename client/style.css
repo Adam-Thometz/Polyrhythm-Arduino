@@ -11,8 +11,9 @@ body {
 #instructions {
   color: rgb(184, 184, 184);
   position: absolute;
-  top: 20%;
-  left: 50%;
+  top: 10%;
+  left: 20%;
+  font-size: 2rem;
   transform: translateX(-50%);
   animation: fade-in-out 10s linear 1 forwards;
 }
