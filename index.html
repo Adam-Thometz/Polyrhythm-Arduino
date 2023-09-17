@@ -8,69 +8,69 @@
 </head>
 <style>
   body {
-  background-color: rgba(0, 0, 0, 1);
-  font-family: Roboto, sans-serif;
-}
-
-#paper {
-  height: 90vh;
-  width: 100vw;
-}
-
-#instructions {
-  color: rgb(184, 184, 184);
-  position: absolute;
-  top: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  animation: fade-in-out 10s linear 1 forwards;
-}
-
-#settings {
-  color: rgb(184, 184, 184);
-  font-size: 3rem;
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  top: 3%;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.noteDisplay {
-  position: absolute;
-  display: flex;
-  bottom: 0%;
-  left: 50%;
-  transform: translateX(-50%);
-}
-.noteDisplay > * {
-  height: 75px;
-  width: 75px;
-  margin: 10px 40px;
-  font-size: 3rem;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@keyframes fade-in-out {
-  0% {
-    opacity: 0;
+    background-color: rgba(0, 0, 0, 1);
+    font-family: Roboto, sans-serif;
   }
-  5% {
-    opacity: 1;
-  }
-  95% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
 
+  #paper {
+    height: 90vh;
+    width: 100vw;
+  }
+
+  #instructions {
+    color: rgb(184, 184, 184);
+    position: absolute;
+    top: 10%;
+    left: 20%;
+    font-size: 2rem;
+    transform: translateX(-50%);
+    animation: fade-in-out 10s linear 1 forwards;
+  }
+
+  #settings {
+    color: rgb(184, 184, 184);
+    font-size: 3rem;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    top: 3%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .noteDisplay {
+    position: absolute;
+    display: flex;
+    bottom: 0%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .noteDisplay > * {
+    height: 75px;
+    width: 75px;
+    margin: 10px 40px;
+    font-size: 3rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @keyframes fade-in-out {
+    0% {
+      opacity: 0;
+    }
+    5% {
+      opacity: 1;
+    }
+    95% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
 </style>
 <body>
   <div id="settings">
@@ -91,6 +91,118 @@
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js" integrity="sha512-jduERlz7En1IUZR54bqzpNI64AbffZWR//KJgF71SJ8D8/liKFZ+s1RxmUmB+bhCnIfzebdZsULwOrbVB5f3nQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
+  // Instruments
+  const PITCHSHIFT = new Tone.PitchShift(0).toDestination();
+  const PIANO = new Tone.Sampler({ urls: { C3: "./piano.wav" } }).connect(PITCHSHIFT);
+
+  // Notes
+  const NOTES = [
+    {
+      name: "C",
+      prefer: "flat"
+    },
+    {
+      name: {
+        flat: "Db",
+        sharp: "C#",
+      },
+      prefer: Math.random() >= .5 ? "sharp" : "flat" // Mix it up. This is the only note where I have no preference
+    },
+    {
+      name: "D",
+      prefer: "sharp"
+    },
+    {
+      name: {
+        flat: "Eb",
+        sharp: "D#",
+      },
+      prefer: "flat"
+    },
+    {
+      name: "E",
+      prefer: "sharp"
+    },
+    {
+      name: "F",
+      prefer: "flat"
+    },
+    {
+      name: {
+        flat: "Gb",
+        sharp: "F#",
+      },
+      prefer: "sharp"
+    },
+    {
+      name: "G",
+      prefer: "sharp"
+    },
+    {
+      name: {
+        flat: "Ab",
+        sharp: "G#",
+      },
+      prefer: "flat"
+    },
+    {
+      name: "A",
+      prefer: "sharp"
+    },
+    {
+      name: {
+        flat: "Bb",
+        sharp: "A#",
+      },
+      prefer: "flat"
+    },
+    {
+      name: "B",
+      prefer: "sharp"
+    },
+  ];
+
+  const root = 0;
+  const minor2 = 1;
+  const major2 = 2;
+  const minor3 = 3;
+  const major3 = 4;
+  const perfect4 = 5;
+  const tritone = 6;
+  const perfect5 = 7;
+  const minor6 = 8;
+  const major6 = 9;
+  const minor7 = 10;
+  const major7 = 11;
+
+  // Chords
+  const CHORDS = {
+    major13th: [
+      root, major3,  perfect5, major7, major2,  perfect4,  minor6,  root
+    ],
+  }
+
+  function changeChord(currPitch) {
+    const rootNote = NOTES.findIndex(val => Object.is(val, currPitch));
+    const notes = [];
+    
+    for (let semitonesFromRoot of CHORDS.major13th) {
+      const noteIdx = (rootNote + semitonesFromRoot) % 12;
+      notes.push(noteIdx);
+    }
+
+    const preferredAccidental = currPitch.prefer;
+    updateDisplay(notes, preferredAccidental);
+  }
+
+  function calculateNewPitch(pitch) {
+    return Math.floor(pitch / (100 / NOTES.length)) % 12;
+  }
+
+  function isAccidental(name) {
+    return typeof name == "object";
+  }
+
   function createAnimation(backgroundColor) {
     return {
       animation: [
@@ -121,41 +233,27 @@
     const calculatedDistance = modDistance >= Math.PI
       ? distance
       : MAX_ANGLE - distance;
-
     return calculatedDistance;
   }
 
-  function changeDisplay() {
-    const ROOT = NOTE_DISPLAY_OPTIONS.findIndex(val => val == currPitch);
-    const notes = [ROOT];
-    const MAJOR_THIRD = (ROOT + 4) % 12;
-    notes.push(MAJOR_THIRD);
-    const PERFECT_FIFTH = (ROOT + 7) % 12;
-    notes.push(PERFECT_FIFTH);
-    const MAJOR_SEVENTH = (ROOT + 11) % 12;
-    notes.push(MAJOR_SEVENTH);
-    const MAJOR_NINTH = (ROOT + 2) % 12;
-    notes.push(MAJOR_NINTH);
-    const PERFECT_ELEVENTH = (ROOT + 5) % 12;
-    notes.push(PERFECT_ELEVENTH);
-    const MAJOR_THIRTEENTH = (ROOT + 9) % 12;
-    notes.push(MAJOR_THIRTEENTH);
-    notes.push(ROOT);
-
+  function updateDisplay(notes, preferredAccidental) {
     for (let i = 0; i < notes.length; i++) {
-      NOTE_DISPLAY[i].textContent = NOTE_DISPLAY_OPTIONS[notes[i]];
+      const currNote = NOTES[notes[i]];
+      const displayName = isAccidental(currNote.name)
+        ? currNote.name[preferredAccidental]
+        : currNote.name
+      NOTE_DISPLAY[i].textContent = displayName;
     }
   }
 
+  // ELEMENTS
   const IS_ON_DISPLAY = document.getElementById("isOn");
   const CURR_KEY_DISPLAY = document.getElementById("currKey")
   const PAPER = document.getElementById("paper");
   const PEN = PAPER.getContext("2d");
   const NOTE_DISPLAY = document.querySelectorAll(".noteDisplay > *");
 
-  const PITCHSHIFT = new Tone.PitchShift(0).toDestination();
-  const SYNTH = new Tone.PolySynth().connect(PITCHSHIFT);
-
+  // COLORS
   const BLUE = "#0066A3";
   const GREEN = "#5DFC0A";
   const YELLOW = "#F1EB9C";
@@ -166,7 +264,7 @@
   const START_TIME = new Date().getTime();
   const OFFSET = 0.03;
 
-  const NOTE_DISPLAY_OPTIONS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+  // DISPLAY
   const ARCS = [
     { color: BLUE, note: "C4" },
     { color: GREEN, note: "A3" },
@@ -177,7 +275,7 @@
     { color: YELLOW, note: "E2" },
     { color: RED, note: "C2" },
   ].map(({ color, note }, i) => {
-    const play = () => SYNTH.triggerAttackRelease(note, "4n");
+    const play = () => PIANO.triggerAttackRelease(note);
     const velocity = VELOCITY - (i * OFFSET);
     return {
       color,
@@ -186,7 +284,7 @@
       nextImpactTime: calculateNextImpactTime(START_TIME, velocity),
       velocity
     };
-  });
+  }); // NOTE THAT COLORS START IN AND GO OUT
 
   function drawLine(start, end) {
     PEN.strokeStyle = "white";
@@ -251,7 +349,7 @@
     requestAnimationFrame(draw);
   }
 
-  let currPitch = NOTE_DISPLAY_OPTIONS[0];
+  let currPitch = NOTES[0];
   let soundEnabled = false;
 
   PAPER.addEventListener("click", () => {
