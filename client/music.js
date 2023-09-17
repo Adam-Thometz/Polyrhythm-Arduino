@@ -99,6 +99,13 @@ function changeChord(currPitch) {
   }
 
   const preferredAccidental = currPitch.prefer;
-
   updateDisplay(notes, preferredAccidental);
+}
+
+function calculateNewPitch(pitch) {
+  return Math.floor(pitch / (100 / NOTES.length)) % 12;
+}
+
+function isAccidental(name) {
+  return typeof name == "object";
 }

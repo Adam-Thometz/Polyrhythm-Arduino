@@ -1,7 +1,5 @@
 const connection = new WebSocket("ws://localhost:3001");
-
-const MAX_PERCENTAGE = 100;
-const NUM_OF_NOTES = NOTES.length;
+console.log(connection)
 
 connection.onopen = () => {
   console.log("opened websocket connection!");
@@ -10,14 +8,13 @@ connection.onopen = () => {
 connection.onmessage = e => {
   const data = +e.data;
   if (data) {
-    // new pitch should return a number btw 0 and 11
-    const newPitch = Math.floor(data / (MAX_PERCENTAGE / NUM_OF_NOTES)) % 12;
-    PITCHSHIFT.pitch = newPitch;
+    const newPitch = calculateNewPitch(data);
     if (currPitch != newPitch) {
+      PITCHSHIFT.pitch = newPitch;
       currPitch = NOTES[newPitch];
-      const pitchDisplay = typeof currPitch.name == "object"
+      const pitchDisplay = isAccidental(currPitch.name)
         ? currPitch.name[currPitch.prefer]
-        : currPitch.name
+        : currPitch.name;
       CURR_KEY_DISPLAY.textContent = `Key: ${pitchDisplay}`;
       changeChord(currPitch);
     }

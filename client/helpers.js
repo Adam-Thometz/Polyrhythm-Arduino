@@ -28,14 +28,13 @@ function calculateDistance(elapsedTime, velocity) {
   const calculatedDistance = modDistance >= Math.PI
     ? distance
     : MAX_ANGLE - distance;
-
   return calculatedDistance;
 }
 
 function updateDisplay(notes, preferredAccidental) {
   for (let i = 0; i < notes.length; i++) {
     const currNote = NOTES[notes[i]];
-    const displayName = typeof currNote.name == "object"
+    const displayName = isAccidental(currNote.name)
       ? currNote.name[preferredAccidental]
       : currNote.name
     NOTE_DISPLAY[i].textContent = displayName;
