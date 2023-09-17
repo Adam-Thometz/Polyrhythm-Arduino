@@ -94,7 +94,6 @@ function changeChord(pitch) {
   
   for (let semitonesFromRoot of CHORDS.major13th) {
     const noteIdx = (pitch + semitonesFromRoot) % 12;
-    console.log(noteIdx)
     notes.push(noteIdx);
   }
 
