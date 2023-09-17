@@ -94,7 +94,7 @@ body {
 <script>
 // Instruments
 const PITCHSHIFT = new Tone.PitchShift(0).toDestination();
-const PIANO = new Tone.Sampler({ urls: { C3: "./piano.wav" } }).connect(PITCHSHIFT);
+const SYNTH = new Tone.Synth().connect(PITCHSHIFT);
 
 // Notes
 const NOTES = [
@@ -288,7 +288,7 @@ const ARCS = [
   { color: YELLOW, note: "E2" },
   { color: RED, note: "C2" },
 ].map(({ color, note }, i) => {
-  const play = () => PIANO.triggerAttackRelease(note);
+  const play = () => SYNTH.triggerAttackRelease(note);
   const velocity = VELOCITY - (i * OFFSET);
   return {
     color,
