@@ -4,6 +4,7 @@ const CURR_KEY_DISPLAY = document.getElementById("currKey")
 const PAPER = document.getElementById("paper");
 const PEN = PAPER.getContext("2d");
 const NOTE_DISPLAY = document.querySelectorAll(".noteDisplay > *");
+const PITCH_SLIDER = document.getElementById("keyRange")
 
 // COLORS
 const BLUE = "#0066A3";

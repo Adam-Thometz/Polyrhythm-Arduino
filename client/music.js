@@ -89,17 +89,27 @@ const CHORDS = {
   ],
 }
 
-function changeChord(currPitch) {
-  const rootNote = NOTES.findIndex(val => Object.is(val, currPitch));
+function changeChord(pitch) {
   const notes = [];
   
   for (let semitonesFromRoot of CHORDS.major13th) {
-    const noteIdx = (rootNote + semitonesFromRoot) % 12;
+    const noteIdx = (pitch + semitonesFromRoot) % 12;
+    console.log(noteIdx)
     notes.push(noteIdx);
   }
 
   const preferredAccidental = currPitch.prefer;
   updateDisplay(notes, preferredAccidental);
+}
+
+function updatePitch(pitch) {
+  PITCHSHIFT.pitch = pitch;
+  currPitch = NOTES[pitch];
+  const pitchDisplay = isAccidental(currPitch.name)
+    ? currPitch.name[currPitch.prefer]
+    : currPitch.name;
+  CURR_KEY_DISPLAY.textContent = `Key: ${pitchDisplay}`;
+  changeChord(pitch);
 }
 
 function calculateNewPitch(pitch) {

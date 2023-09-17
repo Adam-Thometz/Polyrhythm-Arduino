@@ -9,14 +9,6 @@ connection.onmessage = e => {
   const data = +e.data;
   if (data) {
     const newPitch = calculateNewPitch(data);
-    if (currPitch != newPitch) {
-      PITCHSHIFT.pitch = newPitch;
-      currPitch = NOTES[newPitch];
-      const pitchDisplay = isAccidental(currPitch.name)
-        ? currPitch.name[currPitch.prefer]
-        : currPitch.name;
-      CURR_KEY_DISPLAY.textContent = `Key: ${pitchDisplay}`;
-      changeChord(currPitch);
-    }
+    if (currPitch != newPitch) updatePitch(newPitch);
   }
 }

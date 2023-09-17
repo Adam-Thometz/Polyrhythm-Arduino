@@ -34,6 +34,7 @@ function calculateDistance(elapsedTime, velocity) {
 function updateDisplay(notes, preferredAccidental) {
   for (let i = 0; i < notes.length; i++) {
     const currNote = NOTES[notes[i]];
+    console.log(notes)
     const displayName = isAccidental(currNote.name)
       ? currNote.name[preferredAccidental]
       : currNote.name
