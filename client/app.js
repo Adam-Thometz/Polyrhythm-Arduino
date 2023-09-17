@@ -1,4 +1,4 @@
-let currPitch = NOTE_DISPLAY_OPTIONS[0];
+let currPitch = NOTES[0];
 let soundEnabled = false;
 
 PAPER.addEventListener("click", () => {

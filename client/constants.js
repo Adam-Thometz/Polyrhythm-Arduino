@@ -5,10 +5,6 @@ const PAPER = document.getElementById("paper");
 const PEN = PAPER.getContext("2d");
 const NOTE_DISPLAY = document.querySelectorAll(".noteDisplay > *");
 
-// MUSIC
-const PITCHSHIFT = new Tone.PitchShift(0).toDestination();
-const PIANO = new Tone.Sampler({ urls: { C3: "./piano.wav" } }).connect(PITCHSHIFT);
-
 // COLORS
 const BLUE = "#0066A3";
 const GREEN = "#5DFC0A";
@@ -21,7 +17,6 @@ const START_TIME = new Date().getTime();
 const OFFSET = 0.03;
 
 // DISPLAY
-const NOTE_DISPLAY_OPTIONS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 const ARCS = [
   { color: BLUE, note: "C4" },
   { color: GREEN, note: "A3" },
