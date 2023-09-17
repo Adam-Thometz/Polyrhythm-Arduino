@@ -7,70 +7,70 @@
   <title>Arduino-controlled music</title>
 </head>
 <style>
-  body {
-    background-color: rgba(0, 0, 0, 1);
-    font-family: Roboto, sans-serif;
-  }
+body {
+  background-color: rgba(0, 0, 0, 1);
+  font-family: Roboto, sans-serif;
+}
 
-  #paper {
-    height: 90vh;
-    width: 100vw;
-  }
+#paper {
+  height: 90vh;
+  width: 100vw;
+}
 
-  #instructions {
-    color: rgb(184, 184, 184);
-    position: absolute;
-    top: 10%;
-    left: 20%;
-    font-size: 2rem;
-    transform: translateX(-50%);
-    animation: fade-in-out 10s linear 1 forwards;
-  }
+#instructions {
+  color: rgb(184, 184, 184);
+  position: absolute;
+  top: 10%;
+  left: 20%;
+  font-size: 2rem;
+  transform: translateX(-50%);
+  animation: fade-in-out 10s linear 1 forwards;
+}
 
-  #settings {
-    color: rgb(184, 184, 184);
-    font-size: 3rem;
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    top: 3%;
-    left: 50%;
-    transform: translateX(-50%);
-  }
+#settings {
+  color: rgb(184, 184, 184);
+  font-size: 3rem;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  top: 3%;
+  left: 50%;
+  transform: translateX(-50%);
+}
 
-  .noteDisplay {
-    position: absolute;
-    display: flex;
-    bottom: 0%;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  .noteDisplay > * {
-    height: 75px;
-    width: 75px;
-    margin: 10px 40px;
-    font-size: 3rem;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.noteDisplay {
+  position: absolute;
+  display: flex;
+  bottom: 0%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.noteDisplay > * {
+  height: 75px;
+  width: 75px;
+  margin: 10px 40px;
+  font-size: 3rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  @keyframes fade-in-out {
-    0% {
-      opacity: 0;
-    }
-    5% {
-      opacity: 1;
-    }
-    95% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-    }
+@keyframes fade-in-out {
+  0% {
+    opacity: 0;
   }
+  5% {
+    opacity: 1;
+  }
+  95% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 </style>
 <body>
   <div id="settings">
@@ -91,271 +91,289 @@
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js" integrity="sha512-jduERlz7En1IUZR54bqzpNI64AbffZWR//KJgF71SJ8D8/liKFZ+s1RxmUmB+bhCnIfzebdZsULwOrbVB5f3nQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-  // Instruments
-  const PITCHSHIFT = new Tone.PitchShift(0).toDestination();
-  const PIANO = new Tone.Sampler({ urls: { C3: "./piano.wav" } }).connect(PITCHSHIFT);
+// Instruments
+const PITCHSHIFT = new Tone.PitchShift(0).toDestination();
+const PIANO = new Tone.Sampler({ urls: { C3: "./piano.wav" } }).connect(PITCHSHIFT);
 
-  // Notes
-  const NOTES = [
-    {
-      name: "C",
-      prefer: "flat"
+// Notes
+const NOTES = [
+  {
+    name: "C",
+    prefer: "flat"
+  },
+  {
+    name: {
+      flat: "Db",
+      sharp: "C#",
     },
-    {
-      name: {
-        flat: "Db",
-        sharp: "C#",
-      },
-      prefer: Math.random() >= .5 ? "sharp" : "flat" // Mix it up. This is the only note where I have no preference
+    prefer: Math.random() >= .5 ? "sharp" : "flat" // Mix it up. This is the only note where I have no preference
+  },
+  {
+    name: "D",
+    prefer: "sharp"
+  },
+  {
+    name: {
+      flat: "Eb",
+      sharp: "D#",
     },
-    {
-      name: "D",
-      prefer: "sharp"
+    prefer: "flat"
+  },
+  {
+    name: "E",
+    prefer: "sharp"
+  },
+  {
+    name: "F",
+    prefer: "flat"
+  },
+  {
+    name: {
+      flat: "Gb",
+      sharp: "F#",
     },
-    {
-      name: {
-        flat: "Eb",
-        sharp: "D#",
-      },
-      prefer: "flat"
+    prefer: "sharp"
+  },
+  {
+    name: "G",
+    prefer: "sharp"
+  },
+  {
+    name: {
+      flat: "Ab",
+      sharp: "G#",
     },
-    {
-      name: "E",
-      prefer: "sharp"
+    prefer: "flat"
+  },
+  {
+    name: "A",
+    prefer: "sharp"
+  },
+  {
+    name: {
+      flat: "Bb",
+      sharp: "A#",
     },
-    {
-      name: "F",
-      prefer: "flat"
-    },
-    {
-      name: {
-        flat: "Gb",
-        sharp: "F#",
-      },
-      prefer: "sharp"
-    },
-    {
-      name: "G",
-      prefer: "sharp"
-    },
-    {
-      name: {
-        flat: "Ab",
-        sharp: "G#",
-      },
-      prefer: "flat"
-    },
-    {
-      name: "A",
-      prefer: "sharp"
-    },
-    {
-      name: {
-        flat: "Bb",
-        sharp: "A#",
-      },
-      prefer: "flat"
-    },
-    {
-      name: "B",
-      prefer: "sharp"
-    },
-  ];
+    prefer: "flat"
+  },
+  {
+    name: "B",
+    prefer: "sharp"
+  },
+];
 
-  const root = 0;
-  const minor2 = 1;
-  const major2 = 2;
-  const minor3 = 3;
-  const major3 = 4;
-  const perfect4 = 5;
-  const tritone = 6;
-  const perfect5 = 7;
-  const minor6 = 8;
-  const major6 = 9;
-  const minor7 = 10;
-  const major7 = 11;
+const root = 0;
+const minor2 = 1;
+const major2 = 2;
+const minor3 = 3;
+const major3 = 4;
+const perfect4 = 5;
+const tritone = 6;
+const perfect5 = 7;
+const minor6 = 8;
+const major6 = 9;
+const minor7 = 10;
+const major7 = 11;
 
-  // Chords
-  const CHORDS = {
-    major13th: [
-      root, major3,  perfect5, major7, major2,  perfect4,  minor6,  root
+// Chords
+const CHORDS = {
+  major13th: [
+    root, major3,  perfect5, major7, major2,  perfect4,  minor6,  root
+  ],
+}
+
+function changeChord(pitch) {
+  const notes = [];
+  
+  for (let semitonesFromRoot of CHORDS.major13th) {
+    const noteIdx = (pitch + semitonesFromRoot) % 12;
+    console.log(noteIdx)
+    notes.push(noteIdx);
+  }
+
+  const preferredAccidental = currPitch.prefer;
+  updateDisplay(notes, preferredAccidental);
+}
+
+function updatePitch(pitch) {
+  PITCHSHIFT.pitch = pitch;
+  currPitch = NOTES[pitch];
+  const pitchDisplay = isAccidental(currPitch.name)
+    ? currPitch.name[currPitch.prefer]
+    : currPitch.name;
+  CURR_KEY_DISPLAY.textContent = `Key: ${pitchDisplay}`;
+  changeChord(pitch);
+}
+
+function calculateNewPitch(pitch) {
+  return Math.floor(pitch / (100 / NOTES.length)) % 12;
+}
+
+function isAccidental(name) {
+  return typeof name == "object";
+}
+
+function createAnimation(backgroundColor) {
+  return {
+    animation: [
+      { backgroundColor },
+      { backgroundColor: "#000000" }
     ],
+    duration: 2000,
   }
+}
 
-  function changeChord(currPitch) {
-    const rootNote = NOTES.findIndex(val => Object.is(val, currPitch));
-    const notes = [];
-    
-    for (let semitonesFromRoot of CHORDS.major13th) {
-      const noteIdx = (rootNote + semitonesFromRoot) % 12;
-      notes.push(noteIdx);
-    }
+function getDimensions(width, height) {
+  const y = height * 0.9;
 
-    const preferredAccidental = currPitch.prefer;
-    updateDisplay(notes, preferredAccidental);
+  const start = { x: width * 0.1, y };
+  const center = { x: width * 0.5, y };
+  const end = { x: width * 0.9, y };
+
+  return { start, center, end };
+}
+
+function calculateNextImpactTime(currentImpactTime, velocity) {
+  return currentImpactTime + (Math.PI / velocity) * 1000;
+}
+
+function calculateDistance(elapsedTime, velocity) {
+  const distance = Math.PI + (elapsedTime * velocity);
+  const modDistance = distance % MAX_ANGLE;
+  const calculatedDistance = modDistance >= Math.PI
+    ? distance
+    : MAX_ANGLE - distance;
+  return calculatedDistance;
+}
+
+function updateDisplay(notes, preferredAccidental) {
+  for (let i = 0; i < notes.length; i++) {
+    const currNote = NOTES[notes[i]];
+    console.log(notes)
+    const displayName = isAccidental(currNote.name)
+      ? currNote.name[preferredAccidental]
+      : currNote.name
+    NOTE_DISPLAY[i].textContent = displayName;
   }
+}
 
-  function calculateNewPitch(pitch) {
-    return Math.floor(pitch / (100 / NOTES.length)) % 12;
-  }
+// ELEMENTS
+const IS_ON_DISPLAY = document.getElementById("isOn");
+const CURR_KEY_DISPLAY = document.getElementById("currKey")
+const PAPER = document.getElementById("paper");
+const PEN = PAPER.getContext("2d");
+const NOTE_DISPLAY = document.querySelectorAll(".noteDisplay > *");
+const PITCH_SLIDER = document.getElementById("keyRange")
 
-  function isAccidental(name) {
-    return typeof name == "object";
-  }
+// COLORS
+const BLUE = "#0066A3";
+const GREEN = "#5DFC0A";
+const YELLOW = "#F1EB9C";
+const RED = "#FF7276";
 
-  function createAnimation(backgroundColor) {
-    return {
-      animation: [
-        { backgroundColor },
-        { backgroundColor: "#000000" }
-      ],
-      duration: 2000,
-    }
-  }
+const MAX_ANGLE = 2*Math.PI;
+const VELOCITY = 1;
+const START_TIME = new Date().getTime();
+const OFFSET = 0.03;
 
-  function getDimensions(width, height) {
-    const y = height * 0.9;
+// DISPLAY
+const ARCS = [
+  { color: BLUE, note: "C4" },
+  { color: GREEN, note: "A3" },
+  { color: YELLOW, note: "F3" },
+  { color: RED, note: "D3" },
+  { color: BLUE, note: "B2" },
+  { color: GREEN, note: "G2" },
+  { color: YELLOW, note: "E2" },
+  { color: RED, note: "C2" },
+].map(({ color, note }, i) => {
+  const play = () => PIANO.triggerAttackRelease(note);
+  const velocity = VELOCITY - (i * OFFSET);
+  return {
+    color,
+    play,
+    position: i,
+    nextImpactTime: calculateNextImpactTime(START_TIME, velocity),
+    velocity
+  };
+}); // NOTE THAT COLORS START IN AND GO OUT
 
-    const start = { x: width * 0.1, y };
-    const center = { x: width * 0.5, y };
-    const end = { x: width * 0.9, y };
+function drawLine(start, end) {
+  PEN.strokeStyle = "white";
+  PEN.lineWidth = 6;
 
-    return { start, center, end };
-  }
+  PEN.beginPath();
+  PEN.moveTo(start.x, start.y);
+  PEN.lineTo(end.x, end.y);
+  PEN.stroke();
+}
 
-  function calculateNextImpactTime(currentImpactTime, velocity) {
-    return currentImpactTime + (Math.PI / velocity) * 1000;
-  }
+function drawArc(color, center, radius) {
+  PEN.beginPath();
+  PEN.strokeStyle = color;
+  PEN.arc(center.x, center.y, radius, Math.PI, MAX_ANGLE);
+  PEN.stroke();
+}
 
-  function calculateDistance(elapsedTime, velocity) {
-    const distance = Math.PI + (elapsedTime * velocity);
-    const modDistance = distance % MAX_ANGLE;
-    const calculatedDistance = modDistance >= Math.PI
-      ? distance
-      : MAX_ANGLE - distance;
-    return calculatedDistance;
-  }
+function drawBall(x, y, size) {
+  PEN.fillStyle = "white";
+  PEN.beginPath();
+  PEN.arc(x, y, size, 0, MAX_ANGLE);
+  PEN.fill();
+}
 
-  function updateDisplay(notes, preferredAccidental) {
-    for (let i = 0; i < notes.length; i++) {
-      const currNote = NOTES[notes[i]];
-      const displayName = isAccidental(currNote.name)
-        ? currNote.name[preferredAccidental]
-        : currNote.name
-      NOTE_DISPLAY[i].textContent = displayName;
-    }
-  }
+function draw() {
+  const currentTime = new Date().getTime();
+  const elapsedTime = (currentTime - START_TIME) / 1000;
+  PAPER.width = PAPER.clientWidth;
+  PAPER.height = PAPER.clientHeight;
 
-  // ELEMENTS
-  const IS_ON_DISPLAY = document.getElementById("isOn");
-  const CURR_KEY_DISPLAY = document.getElementById("currKey")
-  const PAPER = document.getElementById("paper");
-  const PEN = PAPER.getContext("2d");
-  const NOTE_DISPLAY = document.querySelectorAll(".noteDisplay > *");
+  const { start, center, end } = getDimensions(PAPER.width, PAPER.height);
 
-  // COLORS
-  const BLUE = "#0066A3";
-  const GREEN = "#5DFC0A";
-  const YELLOW = "#F1EB9C";
-  const RED = "#FF7276";
+  drawLine(start, end);
 
-  const MAX_ANGLE = 2*Math.PI;
-  const VELOCITY = 1;
-  const START_TIME = new Date().getTime();
-  const OFFSET = 0.03;
+  const length = end.x - start.x;
+  const initialArcRadius = length * 0.05;
+  const spacing = (length / 2 - initialArcRadius) / ARCS.length;
 
-  // DISPLAY
-  const ARCS = [
-    { color: BLUE, note: "C4" },
-    { color: GREEN, note: "A3" },
-    { color: YELLOW, note: "F3" },
-    { color: RED, note: "D3" },
-    { color: BLUE, note: "B2" },
-    { color: GREEN, note: "G2" },
-    { color: YELLOW, note: "E2" },
-    { color: RED, note: "C2" },
-  ].map(({ color, note }, i) => {
-    const play = () => PIANO.triggerAttackRelease(note);
+  ARCS.forEach((arc, i) => {
+    const radius = initialArcRadius + (i * spacing);
     const velocity = VELOCITY - (i * OFFSET);
-    return {
-      color,
-      play,
-      position: i,
-      nextImpactTime: calculateNextImpactTime(START_TIME, velocity),
-      velocity
-    };
-  }); // NOTE THAT COLORS START IN AND GO OUT
+    const distance = calculateDistance(elapsedTime, velocity);
+    const x = center.x + radius*Math.cos(distance);
+    const y = center.y + radius*Math.sin(distance);
+    
+    drawArc(arc.color, center, radius);
+    drawBall(x, y, length*0.0075);
 
-  function drawLine(start, end) {
-    PEN.strokeStyle = "white";
-    PEN.lineWidth = 6;
+    if (currentTime >= arc.nextImpactTime) {
+      if (soundEnabled) {
+        arc.play();
 
-    PEN.beginPath();
-    PEN.moveTo(start.x, start.y);
-    PEN.lineTo(end.x, end.y);
-    PEN.stroke();
-  }
-
-  function drawArc(color, center, radius) {
-    PEN.beginPath();
-    PEN.strokeStyle = color;
-    PEN.arc(center.x, center.y, radius, Math.PI, MAX_ANGLE);
-    PEN.stroke();
-  }
-
-  function drawBall(x, y, size) {
-    PEN.fillStyle = "white";
-    PEN.beginPath();
-    PEN.arc(x, y, size, 0, MAX_ANGLE);
-    PEN.fill();
-  }
-
-  function draw() {
-    const currentTime = new Date().getTime();
-    const elapsedTime = (currentTime - START_TIME) / 1000;
-    PAPER.width = PAPER.clientWidth;
-    PAPER.height = PAPER.clientHeight;
-
-    const { start, center, end } = getDimensions(PAPER.width, PAPER.height);
-
-    drawLine(start, end);
-
-    const length = end.x - start.x;
-    const initialArcRadius = length * 0.05;
-    const spacing = (length / 2 - initialArcRadius) / ARCS.length;
-
-    ARCS.forEach((arc, i) => {
-      const radius = initialArcRadius + (i * spacing);
-      const velocity = VELOCITY - (i * OFFSET);
-      const distance = calculateDistance(elapsedTime, velocity);
-      const x = center.x + radius*Math.cos(distance);
-      const y = center.y + radius*Math.sin(distance);
-      
-      drawArc(arc.color, center, radius);
-      drawBall(x, y, length*0.0075);
-
-      if (currentTime >= arc.nextImpactTime) {
-        if (soundEnabled) {
-          arc.play();
-
-          const { animation, duration } = createAnimation(arc.color);
-          const noteToAnimateIdx = (ARCS.length-1) - arc.position;
-          NOTE_DISPLAY[noteToAnimateIdx].animate(animation, duration);
-        }
-        arc.nextImpactTime = calculateNextImpactTime(arc.nextImpactTime, arc.velocity);
+        const { animation, duration } = createAnimation(arc.color);
+        const noteToAnimateIdx = (ARCS.length-1) - arc.position;
+        NOTE_DISPLAY[noteToAnimateIdx].animate(animation, duration);
       }
-    });
-
-    requestAnimationFrame(draw);
-  }
-
-  let currPitch = NOTES[0];
-  let soundEnabled = false;
-
-  PAPER.addEventListener("click", () => {
-    soundEnabled = !soundEnabled;
-    IS_ON_DISPLAY.textContent = `Sound: ${soundEnabled ? "On" : "Off"}`;
+      arc.nextImpactTime = calculateNextImpactTime(arc.nextImpactTime, arc.velocity);
+    }
   });
 
-  draw();
+  requestAnimationFrame(draw);
+}
+
+let currPitch = NOTES[0];
+let soundEnabled = false;
+
+PAPER.addEventListener("click", () => {
+  soundEnabled = !soundEnabled;
+  IS_ON_DISPLAY.textContent = `Sound: ${soundEnabled ? "On" : "Off"}`;
+});
+
+PITCH_SLIDER.addEventListener("change", e => {
+  const { value } = e.target;
+  const newPitch = calculateNewPitch(value);
+  if (newPitch != currPitch) updatePitch(newPitch);
+})
+
+draw();
 </script>
