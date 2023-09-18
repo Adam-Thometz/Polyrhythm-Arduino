@@ -85,7 +85,7 @@ const major7 = 11;
 // Chords
 const CHORDS = {
   major13th: [
-    root, major3,  perfect5, major7, major2,  perfect4,  minor6,  root
+    root, major3,  perfect5, major7, major2,  perfect4,  major6,  root
   ],
 }
 
