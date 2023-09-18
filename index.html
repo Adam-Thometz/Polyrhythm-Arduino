@@ -288,7 +288,7 @@ const ARCS = [
   { color: YELLOW, note: "E2" },
   { color: RED, note: "C2" },
 ].map(({ color, note }, i) => {
-  const play = () => SYNTH.triggerAttackRelease(note);
+  const play = () => SYNTH.triggerAttackRelease(note, "4n");
   const velocity = VELOCITY - (i * OFFSET);
   return {
     color,
