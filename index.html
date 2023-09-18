@@ -94,7 +94,7 @@ body {
 <script>
 // Instruments
 const PITCHSHIFT = new Tone.PitchShift(0).toDestination();
-const SYNTH = new Tone.Synth().connect(PITCHSHIFT);
+const SYNTH = new Tone.PolySynth().connect(PITCHSHIFT);
 
 // Notes
 const NOTES = [
